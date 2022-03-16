@@ -116,19 +116,33 @@
                   v-model="address">
           </el-input>
           <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
+          <el-button class="ml-5" type="warning" @click="reset">重置</el-button>
         </div>
 
 <!--        功能性按钮-->
         <div class="pd-10" style="padding-left: 25px">
-          <el-button type="primary">新增<i class="el-icon-circle-plus-outline" style="padding-left: 5px"></i></el-button>
-          <el-button type="danger">批量删除<i class="el-icon-remove-outline" style="padding-left: 5px"></i></el-button>
-          <el-button type="primary">导入<i class="el-icon-bottom" style="padding-left: 5px"></i></el-button>
+          <el-button type="primary" @click="handleAdd">新增<i class="el-icon-circle-plus-outline" style="padding-left: 5px"></i></el-button>
+          <!--添加一个二次确定弹窗-->
+          <el-popconfirm
+                  style="margin-left: 10px"
+                  confirm-button-text='确定'
+                  cancel-button-text='取消'
+                  icon="el-icon-info"
+                  icon-color="red"
+                  title="确定删除吗？"
+                  @confirm="delBatch"
+          >
+            <!--按钮需要添加slot="reference"属性，否则不显示-->
+            <el-button type="danger" slot="reference">批量删除<i class="el-icon-remove-outline" style="padding-left: 5px"></i></el-button>
+          </el-popconfirm>
+          <el-button type="primary" style="margin-left: 10px">导入<i class="el-icon-bottom" style="padding-left: 5px"></i></el-button>
           <el-button type="primary">导出<i class="el-icon-top" style="padding-left: 5px"></i></el-button>
         </div>
 
         <el-main>
 <!--          border属性添加边框 stripe属性添加斑马纹-->
-          <el-table :data="tableData" border stripe :header-cell-class-name="headerBg">
+          <el-table :data="tableData" border stripe :header-cell-class-name="headerBg" @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80">
             </el-table-column>
             <el-table-column prop="username" label="用户名" width="140">
@@ -141,11 +155,23 @@
             </el-table-column>
             <el-table-column prop="address" label="地址">
             </el-table-column>
-
-<!--            表格内置按钮-->
-            <el-table-column label="操作">
-              <el-button type="success">编辑<i class="el-icon-edit" style="padding-left: 5px"></i></el-button>
-              <el-button type="danger">删除<i class="el-icon-remove-outline" style="padding-left: 5px"></i></el-button>
+            <el-table-column label="操作" width="200" align="center">
+              <template slot-scope="scope">
+                <!--表格内置按钮-->
+                <el-button type="success" @click="handleEdit(scope.row)">编辑<i class="el-icon-edit" style="padding-left: 5px"></i></el-button>
+                <!--添加一个二次确定弹窗-->
+                <el-popconfirm
+                        class="ml-5"
+                        confirm-button-text='确定'
+                        cancel-button-text='取消'
+                        icon="el-icon-info"
+                        icon-color="red"
+                        title="确定删除吗？"
+                        @confirm="del(scope.row.id)"
+                >
+                <el-button type="danger" slot="reference">删除<i class="el-icon-remove-outline" style="padding-left: 5px"></i></el-button>
+                </el-popconfirm>
+              </template>
             </el-table-column>
           </el-table>
 
@@ -166,6 +192,31 @@
                     :total="total">
             </el-pagination>
           </div>
+
+          <el-dialog title="用户信息" :visible.sync="dialogFormVisible" width="30%">
+            <el-form label-width="80px" size="small">
+              <el-form-item label="用户名">
+                <el-input v-model="form.username" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="昵称">
+                <el-input v-model="form.nickname" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="邮箱">
+                <el-input v-model="form.email" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="电话">
+                <el-input v-model="form.phone" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="地址">
+                <el-input v-model="form.address" autocomplete="off"></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="dialogFormVisible = false">取 消</el-button>
+              <el-button type="primary" @click="save">确 定</el-button>
+            </div>
+          </el-dialog>
+
         </el-main>
       </el-container>
     </el-container>
@@ -187,6 +238,9 @@
 
 <script>
 
+
+import request from "@/utils/request";
+
 export default {
   data() {
     return {
@@ -197,6 +251,9 @@ export default {
       username: "", // 前端根据用户名搜索  这里有bug，当只输入一个值的时候其他值默认为空，导致模糊查询条件出错，预计需要使用动态sql
       email: "", // 前端根据邮箱搜索
       address: "", // 前端根据地址搜索
+      dialogFormVisible: false, // 新增对话框是否弹出，默认为false
+      form: {}, // 新增&修改对话框的表单数据
+      multipleSelection: [], // 接收表格多选框传回的val值
       collapseBtnClass:'el-icon-s-fold',
       isCollapse: false,
       sideWidth: 200,
@@ -222,19 +279,85 @@ export default {
     },
     //请求分页查询数据
     load() {
-      //fetch:向该链接请求数据，返回一个promise对象
-      fetch("http://localhost:9090/user/page?" +
-              "pageNum=" + this.pageNum +
-              "&pageSize=" + this.pageSize +
-              "&username=" + this.username)
-      .then(res =>
-              res.json()
-      ) // 将返回的数据处理成json格式
-      .then(res => { // 再用then函数取出我们想要的数据
-        console.log(res)
-        this.tableData = res.data //读取后端data数据传入tableData数组
-        this.total = res.total // 读取后端total数据传入total
+      request.get("/user/page", {
+        params: {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
+          username: this.username,
+          email: this.email,
+          address: this.address
+        }
+      }).then(res => {
+                 console.log(res)
+                this.tableData = res.records
+                this.total = res.total
       })
+      //fetch:向该链接请求数据，返回一个promise对象
+      // fetch("http://localhost:9090/user/page?" +
+      //         "pageNum=" + this.pageNum +
+      //         "&pageSize=" + this.pageSize +
+      //         "&username=" + this.username)
+      // .then(res =>
+      //         res.json()
+      // ) // 将返回的数据处理成json格式
+      // .then(res => { // 再用then函数取出我们想要的数据
+      //   console.log(res)
+      //   this.tableData = res.records //读取后端data数据传入tableData数组
+      //   this.total = res.total // 读取后端total数据传入total
+      // })
+    },
+    reset() { // 重置按钮触发事件
+      this.username = "" // 把用户输入的数据设置为空
+      this.email = ""
+      this.address = ""
+      this.load() // 并且重新载入数据
+    },
+    handleAdd() { // 新增按钮触发事件
+      this.dialogFormVisible = true // 把对话框显示出来
+      this.form = {} // 把表单数据设为空值
+    },
+    save() { // 对话框确定按钮触发事件
+      request.post("/user",this.form).then(res => {
+        if (res) {
+          this.$message.success("保存成功")
+          this.dialogFormVisible = false
+          this.load();
+        }else {
+          this.$message.error("保存失败")
+        }
+      })
+    },
+    handleEdit(row) { // 编辑按钮显示事件
+      this.form = JSON.parse(JSON.stringify(row)) // 防止修改时未确认就显示数据
+      // this.form = row
+      this.dialogFormVisible = true
+    },
+    del(id) { // 删除按钮触发事件
+      request.delete("/user/"+id).then(res => { // 接收id并传入后端接口
+        if (res) {
+          this.$message.success("删除成功")
+          this.dialogFormVisible = false
+          this.load();
+        }else {
+          this.$message.error("删除失败")
+        }
+      })
+    },
+    delBatch() {
+      let ids = this.multipleSelection.map(v => v.id) // 把multipleSelection中的对象格式中的id提取出来组成ids数组 [{}, {}] => [1,2]
+      // console.log(ids)
+      request.post("/user/del/batch", ids).then(res => { // 接收ids并传入后端接口
+        if (res) {
+          this.$message.success("批量删除成功")
+          this.load();
+        }else {
+          this.$message.error("批量删除失败")
+        }
+      })
+    },
+    handleSelectionChange(val) { // 表格复选框默认触发事件，val表示返回被选中的数据数组
+      console.log(val)
+      this.multipleSelection = val
     },
     handleSizeChange(pageSize) { //选择显示条数时触发该函数，并返回显示条数
       console.log(pageSize)
