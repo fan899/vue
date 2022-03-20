@@ -157,7 +157,7 @@
                 total: 0, // 前端表格总条数，初始值为0
                 pageNum: 1, // 前端表格页码，初始值为1
                 pageSize: 5, // 前端表格分页数，初始值为5
-                username: "", // 前端根据用户名搜索  这里有bug，当只输入一个值的时候其他值默认为空，导致模糊查询条件出错，预计需要使用动态sql
+                username: "", // 前端根据用户名搜索
                 email: "", // 前端根据邮箱搜索
                 address: "", // 前端根据地址搜索
                 dialogFormVisible: false, // 新增对话框是否弹出，默认为false

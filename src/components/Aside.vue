@@ -3,9 +3,10 @@
 <!--    router属性会把侧边栏的项目用index和页面关联起来，需要把index属性和index.js的路由配置好-->
 <!--    @select是激活菜单时候回调事件，会返回被激活的菜单选项的index-->
     <el-menu :default-openeds="['1', '3']"
-             style="min-height: 100%; overflow-x: hidden"
-             background-color="rgb(48,65,86)"
-             text-color="#fff"
+             style="min-height: 100%; overflow-x: hidden; border-right: 1px solid #546E7A"
+
+             background-color="#546E7A"
+             text-color="#ECEFF1"
              active-text-color="#ffd04b"
              :collapse-transition="false"
              :collapse="isCollapse"
@@ -14,15 +15,18 @@
     >
     <div style="height: 60px; line-height: 60px; text-align: center">
         <img src="../assets/logo.png" alt="LOGO" title="LOGO图片" style="width: 20px; position: relative; top: 5px; margin-right: 5px">
-        <b style="color: #cccccc" v-show="logoTextShow">LOGO图片</b>
+        <b style="color: #90A4AE" v-show="logoTextShow">LOGO图片</b>
     </div>
 <!--        这里的index是 / ，所以点击时会重定向至主页-->
-        <el-menu-item index="/">
-            <template slot="title">
-                <i class="el-icon-house"></i>
+        <el-submenu index="/">
+            <template slot="title"><i class="el-icon-house"></i>
                 <span slot="title">主页</span>
             </template>
-        </el-menu-item>
+            <el-menu-item-group>
+                <template slot="title">转跳</template>
+                <el-menu-item index="/">回到主页</el-menu-item>
+            </el-menu-item-group>
+        </el-submenu>
         <el-submenu index="1">
             <template slot="title"><i class="el-icon-s-order"></i>
                 <span slot="title">缴费订单管理</span>
