@@ -54,8 +54,8 @@
             <el-menu-item-group>
                 <template slot="title">后台用户管理</template>
 <!--                这里的index是user，点击时会重定向到user页面-->
-                <el-menu-item index="user">学生信息</el-menu-item>
-                <el-menu-item index="3-2">老师信息</el-menu-item>
+                <el-menu-item index="student">学生信息</el-menu-item>
+                <el-menu-item index="user">用户信息</el-menu-item>
             </el-menu-item-group>
         </el-submenu>
     </el-menu>

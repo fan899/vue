@@ -13,6 +13,7 @@ const routes = [
     redirect: '/home',
     children: [
       {path: 'home', name: '主页', component: () => import('../views/Home')}, // 导入Home.vue
+      {path: 'student', name: '学生信息', component: () => import('../views/Student')}, // 增加学生信息页面
       {path: 'user', name: '用户信息', component: () => import('../views/User')}  // 将User.vue的页面内容通过子路由的方式在页面中展示
     ]
   },
