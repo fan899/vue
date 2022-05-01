@@ -9,9 +9,10 @@
                   margin-left: 25px"
                     suffix-icon="el-icon-search"
                     class="mr-5"
-                    placeholder="请输入名称..."
-                    v-model="username">
+                    placeholder="请输入学院名称..."
+                    v-model="collegeName">
             </el-input>
+            <!--
             <el-input
                     style="width: 200px;"
                     suffix-icon="el-icon-message"
@@ -26,6 +27,7 @@
                     placeholder="请输入地址..."
                     v-model="address">
             </el-input>
+            -->
             <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
             <el-button class="ml-5" type="warning" @click="reset">重置</el-button>
         </div>
@@ -55,7 +57,7 @@
                 <el-upload
                         id="uploadController"
                         class="upload-demo"
-                        action="http://localhost:9090/user/import"
+                        action="http://localhost:9090/college/import"
                         style="display: inline-block"
                         slot="reference"
                         :show-file-list="false"
@@ -72,17 +74,17 @@
         <!--border属性添加边框 stripe属性添加斑马纹-->
         <el-table :data="tableData" border stripe :header-cell-class-name="headerBg" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" width="80">
+            <el-table-column prop="recId" label="学院ID" width="80">
             </el-table-column>
-            <el-table-column prop="username" label="用户名" width="140">
+            <el-table-column prop="name" label="学院名称" width="140">
             </el-table-column>
-            <el-table-column prop="nickname" label="昵称" width="120">
+            <el-table-column prop="intro" label="学院简介">
             </el-table-column>
-            <el-table-column prop="email" label="邮箱">
+            <el-table-column prop="majorNumber" label="专业个数" width="120">
             </el-table-column>
-            <el-table-column prop="phone" label="电话">
+            <el-table-column prop="stuNumber" label="学生总数" width="120">
             </el-table-column>
-            <el-table-column prop="address" label="地址">
+            <el-table-column prop="president" label="负责人" width="120">
             </el-table-column>
             <el-table-column label="操作" width="200" align="center">
                 <template slot-scope="scope">
@@ -96,7 +98,7 @@
                             icon="el-icon-info"
                             icon-color="red"
                             title="确定删除吗？"
-                            @confirm="del(scope.row.id)"
+                            @confirm="del(scope.row.recId)"
                     >
                         <el-button type="danger" slot="reference">删除<i class="el-icon-remove-outline" style="padding-left: 5px"></i></el-button>
                     </el-popconfirm>
@@ -122,22 +124,22 @@
             </el-pagination>
         </div>
 
-        <el-dialog title="用户信息" :visible.sync="dialogFormVisible" width="30%">
+        <el-dialog title="院校信息" :visible.sync="dialogFormVisible" width="30%">
             <el-form label-width="80px" size="small">
-                <el-form-item label="用户名">
-                    <el-input v-model="form.username" autocomplete="off"></el-input>
+                <el-form-item label="学院名称">
+                    <el-input v-model="form.name" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="昵称">
-                    <el-input v-model="form.nickname" autocomplete="off"></el-input>
+                <el-form-item label="学院简介">
+                    <el-input v-model="form.intro" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="邮箱">
-                    <el-input v-model="form.email" autocomplete="off"></el-input>
+                <el-form-item label="专业个数">
+                    <el-input v-model="form.majorNumber" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="电话">
-                    <el-input v-model="form.phone" autocomplete="off"></el-input>
+                <el-form-item label="学生总数">
+                    <el-input v-model="form.stuNumber" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="地址">
-                    <el-input v-model="form.address" autocomplete="off"></el-input>
+                <el-form-item label="负责人">
+                    <el-input v-model="form.president" autocomplete="off"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -150,7 +152,7 @@
 
 <script>
     export default {
-        name: "User",
+        name: "College",
         data() {
             // const item = {
             //     username: "范超泳",
@@ -165,9 +167,9 @@
                 total: 0, // 前端表格总条数，初始值为0
                 pageNum: 1, // 前端表格页码，初始值为1
                 pageSize: 5, // 前端表格分页数，初始值为5
-                username: "", // 前端根据用户名搜索
-                email: "", // 前端根据邮箱搜索
-                address: "", // 前端根据地址搜索
+                collegeName: "", // 前端根据院校名搜索
+                // email: "", // 前端根据邮箱搜索
+                // address: "", // 前端根据地址搜索
                 dialogFormVisible: false, // 新增对话框是否弹出，默认为false
                 form: {}, // 新增&修改对话框的表单数据
                 multipleSelection: [], // 接收表格多选框传回的val值
@@ -180,13 +182,13 @@
         methods: {
             //请求分页查询数据
             load() {
-                this.request.get("/user/page", {
+                this.request.get("/college/page", {
                     params: {
                         pageNum: this.pageNum,
                         pageSize: this.pageSize,
-                        username: this.username,
-                        email: this.email,
-                        address: this.address
+                        collegeName: this.collegeName
+                        // email: this.email,
+                        // address: this.address
                     }
                 }).then(res => {
                     console.log(res)
@@ -208,9 +210,9 @@
                 // })
             },
             reset() { // 重置按钮触发事件
-                this.username = "" // 把用户输入的数据设置为空
-                this.email = ""
-                this.address = ""
+                this.collegeName = "" // 把用户输入的数据设置为空
+                // this.email = ""
+                // this.address = ""
                 this.load() // 并且重新载入数据
             },
             handleAdd() { // 新增按钮触发事件
@@ -218,7 +220,7 @@
                 this.form = {} // 把表单数据设为空值
             },
             save() { // 对话框确定按钮触发事件
-                this.request.post("/user",this.form).then(res => {
+                this.request.post("/college",this.form).then(res => {
                     if (res) {
                         this.$message.success("保存成功")
                         this.dialogFormVisible = false
@@ -234,7 +236,7 @@
                 this.dialogFormVisible = true
             },
             del(id) { // 删除按钮触发事件
-                this.request.delete("/user/"+id).then(res => { // 接收id并传入后端接口
+                this.request.delete("/college/"+id).then(res => { // 接收id并传入后端接口
                     if (res) {
                         this.$message.success("删除成功")
                         this.dialogFormVisible = false
@@ -247,7 +249,7 @@
             delBatch() { // 批量删除按钮触发事件
                 let ids = this.multipleSelection.map(v => v.id) // 把multipleSelection中的对象格式中的id提取出来组成ids数组 [{}, {}] => [1,2]
                 // console.log(ids)
-                this.request.post("/user/del/batch", ids).then(res => { // 接收ids并传入后端接口
+                this.request.post("/college/del/batch", ids).then(res => { // 接收ids并传入后端接口
                     if (res) {
                         this.$message.success("批量删除成功")
                         this.load();
@@ -257,7 +259,7 @@
                 })
             },
             exp() { // 导出按钮触发事件
-                window.open("http://localhost:9090/user/export") // 打开下载数据页面
+                window.open("http://localhost:9090/college/export") // 打开下载数据页面
             },
             handleExcelImportSuccess() { // 导入文件成功触发事件
                 this.$message.success("导入成功")

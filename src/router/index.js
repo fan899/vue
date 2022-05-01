@@ -10,9 +10,12 @@ const routes = [
     path: '/',
 
     component: () => import('../views/Manage'),
-    redirect: '/home',
+    redirect: '/login',
     children: [
       {path: 'home', name: '主页', component: () => import('../views/Home')}, // 导入Home.vue
+      {path: 'college', name: '院校信息', component: () => import("../views/College")},
+      {path: 'major', name: '专业信息', component: () => import("../views/Major")},
+      {path: 'class', name: '班级信息', component:() => import("../views/Class")},
       {path: 'student', name: '学生信息', component: () => import('../views/Student')}, // 增加学生信息页面
       {path: 'user', name: '用户信息', component: () => import('../views/User')}  // 将User.vue的页面内容通过子路由的方式在页面中展示
     ]

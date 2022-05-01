@@ -9,8 +9,8 @@
                   margin-left: 25px"
                     suffix-icon="el-icon-search"
                     class="mr-5"
-                    placeholder="请输入名称..."
-                    v-model="majorName">
+                    placeholder="请输入班级名称..."
+                    v-model="classesName">
             </el-input>
             <!--<el-input
                     style="width: 200px;"
@@ -24,8 +24,8 @@
                     suffix-icon="el-icon-position"
                     class="mr-5"
                     placeholder="请输入地址..."
-                    v-model="address">-->
-            </el-input>
+                    v-model="address">
+            </el-input>-->
             <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
             <el-button class="ml-5" type="warning" @click="reset">重置</el-button>
         </div>
@@ -55,7 +55,7 @@
                 <el-upload
                         id="uploadController"
                         class="upload-demo"
-                        action="http://localhost:9090/major/import"
+                        action="http://localhost:9090/classes/import"
                         style="display: inline-block"
                         slot="reference"
                         :show-file-list="false"
@@ -72,18 +72,16 @@
         <!--border属性添加边框 stripe属性添加斑马纹-->
         <el-table :data="tableData" border stripe :header-cell-class-name="headerBg" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="专业ID" width="140">
+            <el-table-column prop="id" label="班级ID" width="80">
             </el-table-column>
-            <el-table-column prop="collegeId" label="院校id" width="140">
+            <el-table-column prop="className" label="班级名称" >
             </el-table-column>
-            <el-table-column prop="majorName" label="专业名称" >
+            <el-table-column prop="majorId" label="所属专业id" width="140">
             </el-table-column>
-            <el-table-column prop="price" label="学费" width="100">
+            <el-table-column prop="collegeId" label="所属院校id" width="140">
             </el-table-column>
-            <el-table-column prop="stuNumber" label="人数上限" width="80">
+            <el-table-column prop="celling" label="人数上限" width="140">
             </el-table-column>
-            <!--<el-table-column prop="address" label="地址">
-            </el-table-column>-->
             <el-table-column label="操作" width="200" align="center">
                 <template slot-scope="scope">
                     <!--表格内置按钮-->
@@ -124,20 +122,20 @@
 
         <el-dialog title="用户信息" :visible.sync="dialogFormVisible" width="30%">
             <el-form label-width="80px" size="small">
-                <el-form-item label="专业id">
+                <el-form-item label="班级id">
                     <el-input v-model="form.id" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="班级名称">
+                    <el-input v-model="form.className" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="专业id">
+                    <el-input v-model="form.majorId" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="院校id">
                     <el-input v-model="form.collegeId" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="专业名称">
-                    <el-input v-model="form.majorName" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="学费">
-                    <el-input v-model="form.price" autocomplete="off"></el-input>
-                </el-form-item>
                 <el-form-item label="人数上限">
-                    <el-input v-model="form.stuNumber" autocomplete="off"></el-input>
+                    <el-input v-model="form.celling" autocomplete="off"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -150,7 +148,7 @@
 
 <script>
     export default {
-        name: "Major",
+        name: "Class",
         data() {
             // const item = {
             //     username: "范超泳",
@@ -165,7 +163,7 @@
                 total: 0, // 前端表格总条数，初始值为0
                 pageNum: 1, // 前端表格页码，初始值为1
                 pageSize: 5, // 前端表格分页数，初始值为5
-                majorName: "", // 前端根据用户名搜索
+                classesName: "", // 前端根据班级名搜索
                 // email: "", // 前端根据邮箱搜索
                 // address: "", // 前端根据地址搜索
                 dialogFormVisible: false, // 新增对话框是否弹出，默认为false
@@ -180,11 +178,11 @@
         methods: {
             //请求分页查询数据
             load() {
-                this.request.get("/major/page", {
+                this.request.get("/classes/page", {
                     params: {
                         pageNum: this.pageNum,
                         pageSize: this.pageSize,
-                        majorName: this.majorName
+                        classesName: this.classesName
                         // email: this.email,
                         // address: this.address
                     }
@@ -208,7 +206,7 @@
                 // })
             },
             reset() { // 重置按钮触发事件
-                this.majorName = "" // 把用户输入的数据设置为空
+                this.classesName = "" // 把用户输入的数据设置为空
                 // this.email = ""
                 // this.address = ""
                 this.load() // 并且重新载入数据
@@ -218,7 +216,7 @@
                 this.form = {} // 把表单数据设为空值
             },
             save() { // 对话框确定按钮触发事件
-                this.request.post("/major",this.form).then(res => {
+                this.request.post("/classes",this.form).then(res => {
                     if (res) {
                         this.$message.success("保存成功")
                         this.dialogFormVisible = false
@@ -234,7 +232,7 @@
                 this.dialogFormVisible = true
             },
             del(id) { // 删除按钮触发事件
-                this.request.delete("/major/"+id).then(res => { // 接收id并传入后端接口
+                this.request.delete("/classes/"+id).then(res => { // 接收id并传入后端接口
                     if (res) {
                         this.$message.success("删除成功")
                         this.dialogFormVisible = false
@@ -247,7 +245,7 @@
             delBatch() { // 批量删除按钮触发事件
                 let ids = this.multipleSelection.map(v => v.id) // 把multipleSelection中的对象格式中的id提取出来组成ids数组 [{}, {}] => [1,2]
                 // console.log(ids)
-                this.request.post("/major/del/batch", ids).then(res => { // 接收ids并传入后端接口
+                this.request.post("/classes/del/batch", ids).then(res => { // 接收ids并传入后端接口
                     if (res) {
                         this.$message.success("批量删除成功")
                         this.load();
@@ -257,7 +255,7 @@
                 })
             },
             exp() { // 导出按钮触发事件
-                window.open("http://localhost:9090/major/export") // 打开下载数据页面
+                window.open("http://localhost:9090/classes/export") // 打开下载数据页面
             },
             handleExcelImportSuccess() { // 导入文件成功触发事件
                 this.$message.success("导入成功")

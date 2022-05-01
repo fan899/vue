@@ -13,7 +13,9 @@
                     <el-input size="medium" style="margin: 10px 0" prefix-icon="el-icon-lock" show-password v-model="user.password"></el-input>
                 </el-form-item>
                 <el-form-item style="margin: 20px 0; text-align: center">
-                    <el-button type="success" @click="login">登录</el-button>
+                    <router-link to="/home">
+                        <el-button type="success" @click="login">登录</el-button>
+                    </router-link>
                     <el-button type="info" @click="regsiter">注册</el-button>
                 </el-form-item>
             </el-form>
@@ -41,20 +43,21 @@
         },
         methods: {
             login() { // 点击登录按钮时触发事件
-                this.$refs['userFrom'].validate((valid) => { // valid 当校验通过时返回true，否则返回false
-                    if (valid) {
-                        this.request.post("/user/login", this.user).then(res => {
-                            if (!res) {
-                                this.$message.error("用户名或密码错误")
-                            } else {
-                                this.$router.push("/")
-                            }
-                        })
-                    } else {
-                        this.$message.error("请检查用户名和密码")
-                        return false;
-                    }
-                });
+
+                // this.$refs['userFrom'].validate((valid) => { // valid 当校验通过时返回true，否则返回false
+                //     if (valid) {
+                //         this.request.post("/user/login", this.user).then(res => {
+                //             if (!res) {
+                //                 this.$message.error("用户名或密码错误")
+                //             } else {
+                //                 this.$router.push("/")
+                //             }
+                //         })
+                //     } else {
+                //         this.$message.error("请检查用户名和密码")
+                //         return false;
+                //     }
+                // });
             },
 
         }

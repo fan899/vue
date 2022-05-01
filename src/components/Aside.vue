@@ -43,8 +43,9 @@
             </template>
             <el-menu-item-group>
                 <template slot="title">专业班级编辑</template>
-                <el-menu-item index="2-1">专业信息</el-menu-item>
-                <el-menu-item index="2-2">班级信息</el-menu-item>
+                <el-menu-item index="college">院校信息</el-menu-item>
+                <el-menu-item index="major">专业信息</el-menu-item>
+                <el-menu-item index="class">班级信息</el-menu-item>
             </el-menu-item-group>
         </el-submenu>
         <el-submenu index="3">
