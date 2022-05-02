@@ -10,9 +10,11 @@ const routes = [
     path: '/',
 
     component: () => import('../views/Manage'),
-    redirect: '/login',
+    redirect: '/home',
     children: [
       {path: 'home', name: '主页', component: () => import('../views/Home')}, // 导入Home.vue
+      {path: 'order', name: '订单信息', component: () => import('../views/Order')},
+      {path: 'orderManger', name: '缴费管理', component: () => import('../views/OrderManger')},
       {path: 'college', name: '院校信息', component: () => import("../views/College")},
       {path: 'major', name: '专业信息', component: () => import("../views/Major")},
       {path: 'class', name: '班级信息', component:() => import("../views/Class")},

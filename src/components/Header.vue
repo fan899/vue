@@ -17,7 +17,7 @@
         </div>
 
         <el-dropdown>
-      <span style="padding-right: 5px; cursor: pointer">王小虎</span
+      <span style="padding-right: 5px; cursor: pointer">范超泳</span
       ><i class="el-icon-arrow-down" style="margin-right: 15px"></i>
             <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>个人信息</el-dropdown-item>

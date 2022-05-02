@@ -33,8 +33,8 @@
             </template>
             <el-menu-item-group>
                 <template slot="title">学生缴费情况</template>
-                <el-menu-item index="1-1">订单详情</el-menu-item>
-                <el-menu-item index="1-2">缴费管理</el-menu-item>
+                <el-menu-item index="order">订单信息</el-menu-item>
+                <el-menu-item index="orderManger">缴费管理</el-menu-item>
             </el-menu-item-group>
         </el-submenu>
         <el-submenu index="2">

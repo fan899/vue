@@ -9,30 +9,38 @@
                   margin-left: 25px"
                     suffix-icon="el-icon-search"
                     class="mr-5"
-                    placeholder="请输入名称..."
-                    v-model="majorName">
+                    placeholder="请输入订单编号..."
+                    v-model="no">
             </el-input>
-            <!--<el-input
+            <el-input
                     style="width: 200px;"
                     suffix-icon="el-icon-message"
                     class="mr-5"
-                    placeholder="请输入邮箱..."
-                    v-model="email">
+                    placeholder="请输入学生姓名..."
+                    v-model="stuName">
             </el-input>
             <el-input
                     style="width: 200px;"
                     suffix-icon="el-icon-position"
                     class="mr-5"
-                    placeholder="请输入地址..."
-                    v-model="address">-->
+                    placeholder="请输入支付宝支付流水号..."
+                    v-model="alipayNo">
             </el-input>
+            <el-select class="mr-5" v-model="value" placeholder="请选择">
+                <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
             <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
             <el-button class="ml-5" type="warning" @click="reset">重置</el-button>
         </div>
 
         <!--        功能性按钮-->
         <div class="pd-10" style="padding-left: 25px">
-            <el-button type="primary" @click="handleAdd">新增<i class="el-icon-circle-plus-outline" style="padding-left: 5px"></i></el-button>
+            <el-button disabled type="primary" @click="handleAdd">新增<i class="el-icon-circle-plus-outline" style="padding-left: 5px"></i></el-button>
             <!--添加一个二次确定弹窗-->
             <el-popconfirm
                     style="margin-left: 10px"
@@ -51,18 +59,19 @@
                     title="注意"
                     width="200"
                     trigger="hover"
-                    content="仅能导入xlsx文件，请按模板文件导入">
+                    content="本页面暂不支持导入功能">
                 <el-upload
+                        disabled
                         id="uploadController"
                         class="upload-demo"
-                        action="http://localhost:9090/major/import"
+                        action="http://localhost:9090/user/import"
                         style="display: inline-block"
                         slot="reference"
                         :show-file-list="false"
                         accept="xlsx"
                         :on-success="handleExcelImportSuccess"
                 >
-                    <el-button type="primary" style="margin-left: 10px">导入<i class="el-icon-bottom" style="padding-left: 5px"></i></el-button>
+                    <el-button disabled type="primary" style="margin-left: 10px">导入<i class="el-icon-bottom" style="padding-left: 5px"></i></el-button>
                 </el-upload>
             </el-popover>
 
@@ -72,18 +81,29 @@
         <!--border属性添加边框 stripe属性添加斑马纹-->
         <el-table :data="tableData" border stripe :header-cell-class-name="headerBg" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="专业ID" width="140">
+            <el-table-column prop="id" label="ID" width="80">
             </el-table-column>
-            <el-table-column prop="collegeId" label="院校id" width="140">
+            <el-table-column prop="no" label="订单编号" width="140">
             </el-table-column>
-            <el-table-column prop="majorName" label="专业名称" >
+            <el-table-column prop="stuName" label="学生姓名" width="120">
             </el-table-column>
-            <el-table-column prop="price" label="学费" width="100">
+            <el-table-column prop="price" label="金额">
             </el-table-column>
-            <el-table-column prop="stuNumber" label="人数上限" width="80">
+            <el-table-column prop="payTime" label="支付时间">
             </el-table-column>
-            <!--<el-table-column prop="address" label="地址">
-            </el-table-column>-->
+            <el-table-column prop="returnTime" label="退款时间">
+            </el-table-column>
+            <el-table-column prop="orderTime" label="订单生成时间">
+            </el-table-column>
+            <el-table-column prop="payMethod" label="支付方式">
+            </el-table-column>
+            <el-table-column prop="status" label="订单状态">
+            </el-table-column>
+            <el-table-column label="支付" width="120" align="center">
+                <template slot-scope="scope">
+                    <el-button type="primary" @click="pay(scope.row)" round>支付<i class="el-icon-bank-card" style="padding-left: 5px"></i></el-button>
+                </template>
+            </el-table-column>
             <el-table-column label="操作" width="200" align="center">
                 <template slot-scope="scope">
                     <!--表格内置按钮-->
@@ -124,20 +144,29 @@
 
         <el-dialog title="用户信息" :visible.sync="dialogFormVisible" width="30%">
             <el-form label-width="80px" size="small">
-                <el-form-item label="专业id">
-                    <el-input v-model="form.id" autocomplete="off"></el-input>
+                <el-form-item label="no">
+                    <el-input :disabled="true" v-model="form.no" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="院校id">
-                    <el-input v-model="form.collegeId" autocomplete="off"></el-input>
+                <el-form-item label="学生ID">
+                    <el-input :disabled="true" v-model="form.stuId" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="专业名称">
-                    <el-input v-model="form.majorName" autocomplete="off"></el-input>
+                <el-form-item label="价格">
+                    <el-input :disabled="true" v-model="form.price" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="学费">
-                    <el-input v-model="form.price" autocomplete="off"></el-input>
+                <el-form-item label="支付时间">
+                    <el-input :disabled="true" v-model="form.payTime" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="人数上限">
-                    <el-input v-model="form.stuNumber" autocomplete="off"></el-input>
+                <el-form-item label="退款时间">
+                    <el-input :disabled="true" v-model="form.returnTime" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="订单时间">
+                    <el-input :disabled="true" v-model="form.orderTime" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="支付方式">
+                    <el-input :disabled="false" v-model="form.payMethod" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="订单状态">
+                    <el-input :disabled="false" v-model="form.status" autocomplete="off"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -150,7 +179,7 @@
 
 <script>
     export default {
-        name: "Major",
+        name: "Order",
         data() {
             // const item = {
             //     username: "范超泳",
@@ -160,14 +189,25 @@
             //     address: "guang"
             // };
             return {
+                options: [{
+                    value: '已支付',
+                    label: '已支付'
+                }, {
+                    value: '未支付',
+                    label: '未支付'
+                }, {
+                    value: '已退款',
+                    label: '已退款'
+                }],
                 // tableData: Array(10).fill(item), // 前端表格数据数组
                 tableData: [],
                 total: 0, // 前端表格总条数，初始值为0
                 pageNum: 1, // 前端表格页码，初始值为1
                 pageSize: 5, // 前端表格分页数，初始值为5
-                majorName: "", // 前端根据用户名搜索
-                // email: "", // 前端根据邮箱搜索
-                // address: "", // 前端根据地址搜索
+                no: "", // 前端根据订单编号搜索
+                stuName: "", // 前端根据学生姓名搜索
+                alipayNo: "", // 前端根据支付宝流水订单号搜索
+                value: '', // 订单状态
                 dialogFormVisible: false, // 新增对话框是否弹出，默认为false
                 form: {}, // 新增&修改对话框的表单数据
                 multipleSelection: [], // 接收表格多选框传回的val值
@@ -180,13 +220,14 @@
         methods: {
             //请求分页查询数据
             load() {
-                this.request.get("/major/page", {
+                this.request.get("/order/page", {
                     params: {
                         pageNum: this.pageNum,
                         pageSize: this.pageSize,
-                        majorName: this.majorName
-                        // email: this.email,
-                        // address: this.address
+                        no: this.no,
+                        stuName: this.stuName,
+                        alipayNo: this.alipayNo,
+                        value: this.value
                     }
                 }).then(res => {
                     console.log(res)
@@ -208,9 +249,10 @@
                 // })
             },
             reset() { // 重置按钮触发事件
-                this.majorName = "" // 把用户输入的数据设置为空
-                // this.email = ""
-                // this.address = ""
+                this.no = "" // 把用户输入的数据设置为空
+                this.stuName = ""
+                this.alipayNo = ""
+                this.value = ""
                 this.load() // 并且重新载入数据
             },
             handleAdd() { // 新增按钮触发事件
@@ -218,7 +260,7 @@
                 this.form = {} // 把表单数据设为空值
             },
             save() { // 对话框确定按钮触发事件
-                this.request.post("/major",this.form).then(res => {
+                this.request.post("/order",this.form).then(res => {
                     if (res) {
                         this.$message.success("保存成功")
                         this.dialogFormVisible = false
@@ -234,7 +276,7 @@
                 this.dialogFormVisible = true
             },
             del(id) { // 删除按钮触发事件
-                this.request.delete("/major/"+id).then(res => { // 接收id并传入后端接口
+                this.request.delete("/order/"+id).then(res => { // 接收id并传入后端接口
                     if (res) {
                         this.$message.success("删除成功")
                         this.dialogFormVisible = false
@@ -247,7 +289,7 @@
             delBatch() { // 批量删除按钮触发事件
                 let ids = this.multipleSelection.map(v => v.id) // 把multipleSelection中的对象格式中的id提取出来组成ids数组 [{}, {}] => [1,2]
                 // console.log(ids)
-                this.request.post("/major/del/batch", ids).then(res => { // 接收ids并传入后端接口
+                this.request.post("/order/del/batch", ids).then(res => { // 接收ids并传入后端接口
                     if (res) {
                         this.$message.success("批量删除成功")
                         this.load();
@@ -257,7 +299,7 @@
                 })
             },
             exp() { // 导出按钮触发事件
-                window.open("http://localhost:9090/major/export") // 打开下载数据页面
+                window.open("http://localhost:9090/order/export") // 打开下载数据页面
             },
             handleExcelImportSuccess() { // 导入文件成功触发事件
                 this.$message.success("导入成功")

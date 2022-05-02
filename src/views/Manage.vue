@@ -3,7 +3,7 @@
         <el-container style="min-height: 100vh;">
             <el-aside
                 :width="sideWidth + 'px'"
-                style="background-color: rgb(238, 241, 246);"
+                style="background-color: #78909c; box-shadow: 0 4px 10px 0 #212121"
             >
                 <!--        插入侧边栏组件，并传入值-->
                 <Aside :isCollapse="isCollapse" :logoTextShow="logoTextShow"></Aside>
@@ -11,8 +11,7 @@
 
             <el-container>
                 <el-header
-                        style="border-left: 1px solid #546E7A;
-                        background-image: linear-gradient(to right, #546E7A 5%, #ECEFF1 95%)">
+                        style="background-color: white; box-shadow: 0 0 6px #212121;">
                     <Header
                         :collapse="collapse"
                         :collapseBtnClass="collapseBtnClass"

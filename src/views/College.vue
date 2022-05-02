@@ -46,7 +46,7 @@
                     @confirm="delBatch"
             >
                 <!--按钮需要添加slot="reference"属性，否则不显示-->
-                <el-button type="danger" slot="reference">批量删除<i class="el-icon-remove-outline" style="padding-left: 5px"></i></el-button>
+                <el-button type="danger" slot="reference">批量删除<i class="el-icon-delete" style="padding-left: 5px"></i></el-button>
             </el-popconfirm>
             <el-popover
                     placement="top-start"
@@ -89,7 +89,7 @@
             <el-table-column label="操作" width="200" align="center">
                 <template slot-scope="scope">
                     <!--表格内置按钮-->
-                    <el-button type="success" @click="handleEdit(scope.row)">编辑<i class="el-icon-edit" style="padding-left: 5px"></i></el-button>
+                    <el-button type="success" @click="handleEdit(scope.row)" round>编辑<i class="el-icon-edit" style="padding-left: 5px"></i></el-button>
                     <!--添加一个二次确定弹窗-->
                     <el-popconfirm
                             class="ml-5"
@@ -100,7 +100,7 @@
                             title="确定删除吗？"
                             @confirm="del(scope.row.recId)"
                     >
-                        <el-button type="danger" slot="reference">删除<i class="el-icon-remove-outline" style="padding-left: 5px"></i></el-button>
+                        <el-button type="danger" slot="reference" round>删除<i class="el-icon-delete" style="padding-left: 5px"></i></el-button>
                     </el-popconfirm>
                 </template>
             </el-table-column>
