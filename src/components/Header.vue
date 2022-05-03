@@ -17,12 +17,15 @@
         </div>
 
         <el-dropdown>
-      <span style="padding-right: 5px; cursor: pointer">范超泳</span
+        <!--利用{{}}把右上角的数据写活-->
+      <span style="padding-right: 5px; cursor: pointer">{{user.nickname}}</span
       ><i class="el-icon-arrow-down" style="margin-right: 15px"></i>
             <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>个人信息</el-dropdown-item>
                 <el-dropdown-item>
-                    <router-link to="/login" style="text-decoration: none">退出登录</router-link>
+                    <router-link to="/person">个人信息</router-link>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                    <span  style="text-decoration: none" @click="logout">退出登录</span>
                 </el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
@@ -32,6 +35,12 @@
 <script>
     export default {
         name: "Header",
+        data() {
+          return {
+              // 定义user，从localStorage中取出user的值，然后利用三目表达式对其进行判断，如果不为空就转换为json字符串输出，为空就返回空值
+              user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}
+          }
+        },
         props: {
             collapseBtnClass: String,
             collapse: Function,
@@ -47,6 +56,13 @@
                 console.log(newVal);
             },
         },
-        methods: {},
+        methods: {
+            logout() { // 点击退出登录触发事件
+                // 转跳到登录页面
+                this.$router.push("/login")
+                localStorage.removeItem("user")
+                this.$message.success("退出成功")
+            }
+        },
     };
 </script>

@@ -16,15 +16,15 @@
                     style="width: 200px;"
                     suffix-icon="el-icon-message"
                     class="mr-5"
-                    placeholder="请输入邮箱..."
-                    v-model="email">
+                    placeholder="请输入手机号码..."
+                    v-model="phone">
             </el-input>
             <el-input
                     style="width: 200px;"
                     suffix-icon="el-icon-position"
                     class="mr-5"
-                    placeholder="请输入地址..."
-                    v-model="address">
+                    placeholder="请输入身份证号..."
+                    v-model="cardId">
             </el-input>
             <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
             <el-button class="ml-5" type="warning" @click="reset">重置</el-button>
@@ -78,11 +78,13 @@
             </el-table-column>
             <el-table-column prop="nickname" label="昵称" width="120">
             </el-table-column>
-            <el-table-column prop="email" label="邮箱">
+            <el-table-column prop="cardId" label="身份证号">
             </el-table-column>
             <el-table-column prop="phone" label="电话">
             </el-table-column>
-            <el-table-column prop="address" label="地址">
+            <el-table-column prop="email" label="邮箱">
+            </el-table-column>
+            <el-table-column prop="authentication" label="权限">
             </el-table-column>
             <el-table-column label="操作" width="200" align="center">
                 <template slot-scope="scope">
@@ -130,18 +132,24 @@
                 <el-form-item label="昵称">
                     <el-input v-model="form.nickname" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="邮箱">
-                    <el-input v-model="form.email" autocomplete="off"></el-input>
+                <el-form-item label="身份证号">
+                    <el-input v-model="form.cardId" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="电话">
                     <el-input v-model="form.phone" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="地址">
-                    <el-input v-model="form.address" autocomplete="off"></el-input>
+                <el-form-item label="邮箱">
+                    <el-input v-model="form.email" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="权限">
+                    <el-select v-model="form.authentication" placeholder="请选择用户角色" style="width: 100%">
+                        <el-option label="学生" value="学生"></el-option>
+                        <el-option label="操作员" value="操作员"></el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="danger" @click="dialogFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="save">确 定</el-button>
             </div>
         </el-dialog>
@@ -166,8 +174,8 @@
                 pageNum: 1, // 前端表格页码，初始值为1
                 pageSize: 5, // 前端表格分页数，初始值为5
                 username: "", // 前端根据用户名搜索
-                email: "", // 前端根据邮箱搜索
-                address: "", // 前端根据地址搜索
+                phone: "", // 前端根据邮箱搜索
+                cardId: "", // 前端根据地址搜索
                 dialogFormVisible: false, // 新增对话框是否弹出，默认为false
                 form: {}, // 新增&修改对话框的表单数据
                 multipleSelection: [], // 接收表格多选框传回的val值
@@ -185,8 +193,8 @@
                         pageNum: this.pageNum,
                         pageSize: this.pageSize,
                         username: this.username,
-                        email: this.email,
-                        address: this.address
+                        phone: this.phone,
+                        cardId: this.cardId
                     }
                 }).then(res => {
                     console.log(res)
@@ -209,8 +217,8 @@
             },
             reset() { // 重置按钮触发事件
                 this.username = "" // 把用户输入的数据设置为空
-                this.email = ""
-                this.address = ""
+                this.phone = ""
+                this.cardId = ""
                 this.load() // 并且重新载入数据
             },
             handleAdd() { // 新增按钮触发事件

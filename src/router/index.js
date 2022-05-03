@@ -19,7 +19,8 @@ const routes = [
       {path: 'major', name: '专业信息', component: () => import("../views/Major")},
       {path: 'class', name: '班级信息', component:() => import("../views/Class")},
       {path: 'student', name: '学生信息', component: () => import('../views/Student')}, // 增加学生信息页面
-      {path: 'user', name: '用户信息', component: () => import('../views/User')}  // 将User.vue的页面内容通过子路由的方式在页面中展示
+      {path: 'user', name: '用户信息', component: () => import('../views/User')},  // 将User.vue的页面内容通过子路由的方式在页面中展示
+      {path: 'person', name: '个人信息', component: () => import('../views/Person')}
     ]
   },
   {
@@ -34,6 +35,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: () => import('../views/Login')
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('../views/Register')
   }
 ]
 

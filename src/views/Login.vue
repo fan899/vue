@@ -69,20 +69,24 @@
                     if (valid) {
                         this.request.post("/user/login", this.userForm).then(res => {
                             // console.log(res)
-                            if (!res) {
-                                this.$message.error("用户名或密码错误")
-                            } else {
+                            // == 用于判断值是否相同，类型也不同也会被转换比较
+                            // === 会连同类型也会判断是否一致
+                            if (res.code === "200") { // 当后端返回的值中的code为200时，才算登录成功
+                                localStorage.setItem("user", JSON.stringify(res.data)) // 把用户信息存入浏览器
                                 this.$router.push("/")
+                                this.$message.success("登录成功")
+                            } else {
+                                this.$message.error(res.msg) // 如果判断不通过，则返回后端传来的msg
                             }
                         })
                     } else {
-                        this.$message.error("请检查用户名和密码")
+                        this.$message.error("请检查用户名和密码是否有误")
                         return false;
                     }
                 });
             },
             register() {
-
+                this.$router.push("/register")
             }
 
         }
@@ -93,7 +97,7 @@
     .wrapper {
         /*设置100%窗口高度*/
         height: 100vh;
-        background-image: linear-gradient(to bottom, #CFD8DC, #B0BEC5, #607D8B, #263238, #212121);
+        background-image: linear-gradient(to bottom, #f5f1ed, #70798c, #252323);
         overflow: hidden;
     }
 </style>
