@@ -218,6 +218,10 @@
             this.load() //初始化页面时，请求后端表格数据
         },
         methods: {
+            pay(row) {
+                const url = `http://localhost:9090/alipay/pay?subject=${row.stuName}&traceNo=${row.no}&totalAmount=${row.price}`
+                window.open(url);
+            },
             //请求分页查询数据
             load() {
                 this.request.get("/order/page", {

@@ -22,10 +22,10 @@
       ><i class="el-icon-arrow-down" style="margin-right: 15px"></i>
             <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                    <router-link to="/person">个人信息</router-link>
+                    <span style="text-decoration: none" @click="personInfo">个人信息</span>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                    <span  style="text-decoration: none" @click="logout">退出登录</span>
+                    <span style="text-decoration: none" @click="logout">退出登录</span>
                 </el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
@@ -62,6 +62,9 @@
                 this.$router.push("/login")
                 localStorage.removeItem("user")
                 this.$message.success("退出成功")
+            },
+            personInfo() {
+                this.$route.push("/person")
             }
         },
     };

@@ -201,9 +201,11 @@
         },
         methods: {
             pay(row) {
-                this.request.post("/order" + row.cardId).then(res => {
+                this.request.post("/order/" + row.cardId).then(res => {
                     if (res.code === '200') {
                         this.$message.success("订单生成成功，请到订单页面完成支付")
+                    }else {
+                        this.$message.error(res.msg)
                     }
                 })
             },
