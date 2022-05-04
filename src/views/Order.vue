@@ -101,7 +101,7 @@
             </el-table-column>
             <el-table-column label="支付" width="120" align="center">
                 <template slot-scope="scope">
-                    <el-button type="primary" @click="pay(scope.row)" round>支付<i class="el-icon-bank-card" style="padding-left: 5px"></i></el-button>
+                    <el-button type="primary" @click="pay(scope.row)" round :key="scope.row.id" :disabled = "scope.row.status !== '未支付'"  >支付<i class="el-icon-bank-card" style="padding-left: 5px"></i></el-button>
                 </template>
             </el-table-column>
             <el-table-column label="操作" width="200" align="center">
@@ -211,7 +211,9 @@
                 dialogFormVisible: false, // 新增对话框是否弹出，默认为false
                 form: {}, // 新增&修改对话框的表单数据
                 multipleSelection: [], // 接收表格多选框传回的val值
-                headerBg: 'headerBg' // 表头背景颜色
+                headerBg: 'headerBg', // 表头背景颜色
+                // isDisabled: false, // false为启用支付按钮，true为禁用
+
             }
         },
         created() {
@@ -219,8 +221,10 @@
         },
         methods: {
             pay(row) {
+                //传入订单名称，订单编号，订单价格给支付宝的url
                 const url = `http://localhost:9090/alipay/pay?subject=${row.stuName}&traceNo=${row.no}&totalAmount=${row.price}`
                 window.open(url);
+
             },
             //请求分页查询数据
             load() {

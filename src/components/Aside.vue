@@ -25,6 +25,7 @@
             <el-menu-item-group>
                 <template slot="title">转跳</template>
                 <el-menu-item index="/">回到主页</el-menu-item>
+                <el-menu-item index="person">个人中心</el-menu-item>
             </el-menu-item-group>
         </el-submenu>
         <el-submenu index="1">

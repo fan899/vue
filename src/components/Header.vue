@@ -64,7 +64,7 @@
                 this.$message.success("退出成功")
             },
             personInfo() {
-                this.$route.push("/person")
+                this.$router.push("/person")
             }
         },
     };
